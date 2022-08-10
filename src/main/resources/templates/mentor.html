@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+    xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            $("#search-input").on("keyup", function() {
+                var value = $(this).val().toLowerCase();
+                $("#mentorTable tr").filter(function() {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+        });
+    </script>
+</head>
+<body class="container">
+<nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">WebSiteName</a>
+        </div>
+        <ul class="nav navbar-nav">
+            <li class="active">
+                <th:block sec:authorize="hasRole('ROLE_ADMIN')">
+                    <a th:href="@{/mentor}">Mentor list</a>
+                </th:block>
+            </li>
+            <li>
+                <th:block sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_MENTOR')">
+                    <a th:href="@{/internship/1}">Intern list</a>
+                </th:block>
+            </li>
+            <li><a href="#">Scheduled</a></li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+            <li>
+                <th:block sec:authorize="isAuthenticated()">
+                    <a href="#" th:utext="${#request.userPrincipal.name}"></a>
+                </th:block>
+            </li>
+            <li><a th:href="@{/logout}"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
+        </ul>
+    </div>
+</nav>
+<div class="container">
+    <h1 style="text-align: center">Mentor List</h1>
+    <br>
+    <input type="text" id="search-input" placeholder="Search..." class="col-xs-4" style="float: right">
+    <br>
+    <table class="table table-bordered" style="margin-top: 10px">
+        <thead>
+        <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Name</th>
+            <th scope="col">Email</th>
+            <th scope="col">Phone number</th>
+            <th scope="col">Amount</th>
+        </tr>
+        </thead>
+        <tbody id="mentorTable">
+        <tr th:each="mentor :${infoMentor}">
+            <td th:text="${mentor.id}"/>
+            <td class="col-xs-2">
+                <div class="media-left media-middle">
+                    <img th:src="${mentor.card_photo}" class="img-circle" style="width: 50px; height: 50px"/>
+                </div>
+                <div class="media-body">
+                    <a th:href="@{/infoMentor}" th:text="${user.get(mentor.user_id).full_name}"></a>
+                </div>
+            </td>
+            <td th:text="${user.get(mentor.user_id).email}"/>
+            <td th:text="${user.get(mentor.user_id).phone_number}"/>
+            <td th:text="${map.get(mentor.getId())}"/>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

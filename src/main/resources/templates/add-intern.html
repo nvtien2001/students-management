@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div class="container">
+    <h1 style="text-align: center">Intern Information</h1>
+    <br>
+    <form th:action="@{saveIntern}" th:object="${newIntern}" method="post" enctype="multipart/form-data">
+        <input type="text" th:field="*{name}" class="form-control col-4 mb-4"
+               placeholder="Enter name" required>
+        <input type="email" th:field="*{email}" class="form-control col-4 mb-4"
+               placeholder="Enter email" required>
+        <input type="text" th:field="*{phone_number}" class="form-control col-4 mb-4"
+               placeholder="Enter phone number" required>
+        <input type="date" th:field="*{birthday}" class="form-control col-4 mb-4" required>
+
+        <div style="width: 20%;">
+            <label for="university">University:</label>
+            <select class="form-control" id="university" th:field="*{university_id}">
+                <option th:each="u :${university}" th:value="${u.id}" th:text="${u.name}"/>
+            </select>
+        </div>
+        <div style="width: 20%;">
+            <label for="position">Select position:</label>
+            <select class="form-control" id="position" th:field="*{position_id}">
+                <option th:each="p :${position}" th:value="${p.id}" th:text="${p.name}"/>
+            </select>
+        </div>
+        <div class="form-group" style="width: 100px">
+            <label for="level">Select level:</label>
+            <select class="form-control" id="level" th:field="*{level}">
+                <option th:value="0" selected>0</option>
+                <option th:value="1">1</option>
+                <option th:value="2">2</option>
+                <option th:value="3">3</option>
+                <option th:value="4">4</option>
+            </select>
+        </div>
+        <div style="width: 20%;">
+            <label>Select mentor:</label>
+            <select th:field="*{mentor_id}" class="form-control">
+                <option th:each="m : ${mentor}" th:value="${m.id}" th:text="${users.get(m.getUser_id()).full_name}"/>
+            </select>
+        </div>
+        <div style="width: 20%;">
+            <label>Company card:</label>
+            <select th:field="*{company_card_id}" class="form-control">
+                <option th:each="c :${card}" th:value="${c.id}" th:text="${c.getId()}"/>
+            </select>
+        </div>
+        <br>
+        <input type="submit" value="Save" class="btn btn-primary">
+        <input type="hidden" th:field="*{id}">
+    </form>
+</div>
+</body>
+</html>
