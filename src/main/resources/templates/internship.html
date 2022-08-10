@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#search-input").on("keyup", function () {
+                let value = $(this).val().toLowerCase();
+                $("#internTable tr").filter(function () {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+        });
+    </script>
+</head>
+<body class="container">
+<nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">WebSiteName</a>
+        </div>
+        <ul class="nav navbar-nav">
+            <li>
+                <th:block sec:authorize="hasRole('ROLE_ADMIN')">
+                    <a th:href="@{/mentor}">Mentor list</a>
+                </th:block>
+            </li>
+            <li class="active">
+                <th:block sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_MENTOR')">
+                    <a th:href="@{/internship/1}">Intern list</a>
+                </th:block>
+            </li>
+            <li><a href="#">Scheduled</a></li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+            <li>
+                <th:block sec:authorize="isAuthenticated()">
+                    <a href="#" th:utext="${#request.userPrincipal.name}"></a>
+                </th:block>
+            </li>
+            <li><a th:href="@{/logout}"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
+        </ul>
+    </div>
+</nav>
+<div>
+    <h1 style="text-align: center">Intern List</h1>
+    <br>
+    <div style="margin-bottom: 5px">
+        <a th:href="@{/addIntern}" class="btn btn-primary">New intern</a>
+        <input type="text" id="search-input" placeholder="Search..." class="col-xs-4" style="float: right">
+    </div>
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Name</th>
+            <th scope="col">Level</th>
+            <th scope="col">Position</th>
+            <th scope="col">Action</th>
+        </tr>
+        </thead>
+        <tbody id="internTable">
+        <tr th:each="intern :${infoIntern}">
+            <td th:text="${intern.id}"/>
+            <td class="col-xs-2">
+                <a th:href="@{/infoIntern(id=${intern.getId()})}" th:text="${intern.name}"></a>
+            </td>
+            <td th:text="${intern.level}"/>
+            <td th:text="${position.get(intern.position_id).name}"/>
+            <td>
+                <a th:href="@{/editIntern(id=${intern.getId()})}" class="btn btn-primary">Edit</a>
+                <a onclick="return confirm('Delete ?')" th:href="@{/deleteIntern(id=${intern.getId()})}"
+                   class="btn btn-danger" id="btn_delete">Delete</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<div class="row" th:fragment="pagination" style="float: right">
+    <div class="col-md-2"></div>
+    <div class="col-md-8">
+        <nav aria-label="Pagination">
+            <ul class="pagination justify-content-center">
+                <li class="page-item" th:each="pageNumber : ${pageNumbers}">
+                    <a class="page-link" th:href="@{|/intern/${pageNumber}|}" th:text="${pageNumber}">1</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+    <div class="col-md-2"></div>
+</div>
+</body>
+</html>
